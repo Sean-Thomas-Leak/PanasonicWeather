@@ -1,0 +1,66 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Weather Forecast";
+}
+
+<div class="text-center">
+    <h2>Check the current weather at one of Panasonic's Global Sites:</h2>
+    <select id="citySelectList">
+        <option desc="" lng="" lat="">-- Select --</option>
+        @foreach (City city in Model.cityList)
+        {
+            <option name="@city.name" country="@city.country" lng="@city.longitude" lat="@city.latitude">@city.desc</option>
+        }
+    </select>
+    <div id="displayFields">
+        <h3 id="cityDescLabel"></h3>
+        <h3 id="tempDisplay"></h3>
+        <h3 id="rainDisplay"></h3>
+        <h3 id="windDisplay"></h3>
+    </div>
+
+</div>
+
+<script >
+$(document).ready(function () {
+    //Store current date/time
+    const date = new Date();
+
+    //Convert Celsius to Farenheit
+    function cToF(n) {
+            return Math.trunc(((n * 9.0 / 5.0) + 32.0));
+    }
+    
+    function kphToMph(n)
+    {
+            return Math.trunc(n / 1.609344);
+    }
+
+    //Hide weather display and select default option on page load
+    $("#displayFields").hide();
+    $("#citySelectList").prop("selectedIndex", 0);
+
+    //Update weather for selected option
+    $("#citySelectList").on("change", function () {
+        //Hide display fields before data-fetch
+        $("#displayFields").hide();
+
+        let selected = $(this).find('option:selected');
+        $("#cityDescLabel").text(selected.attr("name") + " - " + selected.attr("country"));
+
+        let apiURL = "https://api.open-meteo.com/v1/forecast?latitude=" 
+            + selected.attr("lat") + "&longitude=" 
+            + selected.attr("lng") 
+            + "&hourly=temperature_2m,precipitation_probability,wind_speed_10m&timezone=America%2FNew_York&forecast_days=1";
+
+        //Fetch data from open-metro weather api based on city location
+        $.getJSON(apiURL,"",function(result) {
+                $("#tempDisplay").text("🌡️: " + cToF(result.hourly.temperature_2m[date.getHours()]) + "°F");
+                $("#rainDisplay").text("🌧️: " + result.hourly.precipitation_probability[date.getHours()] + "%");
+                $("#windDisplay").text("🌬️: " + kphToMph(result.hourly.wind_speed_10m[date.getHours()]) + " mph");
+                $("#displayFields").show();
+            });
+        });
+});
+</script>
