@@ -1,1 +1,5 @@
-# PanasonicWeather
+## This is a simple weather forecast app intended to showcase some familiarity with the ASP.NET/MVC web framework environment.
+### This small web application defines a data structure for information about different cities such as latitude, longitude, and which Panasonic facility is located there. After which, it displays that data as selectable options on the front-end and then makes an API call to fetch real-time weather specifics for the selected city. 
+
+- In lieu of a database connection, a list of classes is constructed with the model to serve as a data source from the server-side.
+- Weather data such as current temperature, chance of precipitation, and wind speed is displayed on selection of a drop-down menu option. Celsius values are converted in JavaScript to Farenheit as well as kh/h to mph.
